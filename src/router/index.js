@@ -10,7 +10,15 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    beforeEnter: async (to, from, next) => {
+      const token = localStorage.getItem('token');
+      if(token) {
+        next();
+      } else {
+        next({name: 'Sign In'})
+      }
+    }
   },
   {
     path: '/sign_in',

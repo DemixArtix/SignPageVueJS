@@ -24,8 +24,6 @@
 </template>
 
 <script>
-  import { email, required, minLength, maxLength } from 'vuelidate/lib/validators';
-  import validation from "../mixins/validation";
   import api from '@/plugins/api';
 
   export default {
@@ -35,63 +33,11 @@
       loginPass: '',
       message: '',
     }),
-    mixins: [validation],
-    validations: {
-      email: {
-        required,
-        email
-      },
-      phone: {
-        required,
-        correctNumber: function(value) {
-          return this.regExpTest(
-            value,
-            /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/
-          )
-        },
-      },
-      password: {
-        required,
-        minLength: minLength(8),
-        maxLength: maxLength(30),
-        strongPassword: function(value) {
-          return this.regExpTest(
-            value,
-            /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S+$).{8,}$/
-          )
-        }
-      },
-      passwordRepeat: {
-        required,
-        matchingPasswords: function() {
-          return this.password === this.passwordRepeat
-        }
-      },
-      name: {
-        required,
-        minLength: minLength(2),
-        correctName: function(value) {
-          return this.regExpTest(
-            value,
-            /^([А-ЯЁ]|[A-Z])([а-яё]|[a-z]|-|~)+$/
-          )
-        }
-      },
-      surname: {
-        required,
-        minLength: minLength(2),
-        correctSurname: function(value) {
-          return this.regExpTest(
-            value,
-            /^([А-ЯЁ]|[A-Z])([а-яё]|[a-z]|-|~)+$/
-          )
-        }
-      },
-    },
     computed: {
     },
     methods: {
       async onSignIn() {
+        this.message = '';
         const formData = {
           email: this.login,
           password: this.loginPass,
@@ -107,10 +53,13 @@
             } else {
               this.message = message;
             }
+            console.log(res);
 
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err.response.data);
+            this.message = err.response.data.message;
+
           });
       },
     }
